@@ -1,0 +1,18 @@
+{
+  "name": "pouchdb-couchdb-transform-cli",
+  "version": "0.0.0",
+  "description": "",
+  "main": "cli.js",
+  "scripts": {
+    "test": "./cli.js"
+  },
+  "bin": {
+    "pouchdb-couchdb-transform-cli": "./cli.js"
+  },
+  "author": "R.J. Steinert <rj@rjsteinert.com>",
+  "license": "ISC",
+  "dependencies": {
+    "pouchdb": "^6.4.3",
+    "tangy-log": "^1.0.0"
+  }
+}
