@@ -25,3 +25,6 @@ Note that if that was a local PouchDB database using LevelDB your command might 
 ```
 pouchdb-couchdb-transform-cli ./db/ test-db ./transformer-example.js
 ```
+
+## Limitations
+With the current code you can't pass in view keys which would be handy. Want to send a PR? :-)
