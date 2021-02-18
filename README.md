@@ -29,5 +29,18 @@ Note that if that was a local PouchDB database using LevelDB your command might 
 pouchdb-couchdb-transform-cli ./db/ test-db ./transformer-example.js
 ```
 
+## Asynchronous Transformers
+You can also make asynchronous calls in your transformers by adding the `async` keyword to your transformer function.
+```
+module.exports = async function(doc) {
+  if (doc.hasOwnProperty('foo')) {
+    const request = await fetch(`https://some-server.com/what-foo-should-be`)
+    const whatFooShouldBe = await request.json()
+    doc.foo = whatFooShouldBe.foo
+    return doc
+  }
+}
+```
+
 ## Limitations
 With the current code you can't pass in view keys which would be handy. Want to send a PR? :-)
