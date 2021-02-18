@@ -2,6 +2,8 @@
 
 You have a pouchdb/couchdb with lots of docs. You need to transform some or all of them in a perfomant way that won't blow up the memory on your machine. Write your transformer and use. Note that if this module gives you trouble, you can also try https://github.com/ntsang168/couchtransform which is strictly for use with CouchDB.
 
+This module uses the node.js core module `child_process` to spawn a separate process for each of your transforms. This prevents lazy garbage collection in node from allowing memory to balloon. 
+
 ## Install
 ```
 npm install -g pouchdb-couchdb-transform-cli
