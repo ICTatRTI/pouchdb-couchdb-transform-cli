@@ -9,7 +9,7 @@ npm install -g pouchdb-couchdb-transform-cli
 
 ## Example transformer usage
 This will transform all docs with property of foo so that foo equals true. Save it as a file named `transformer-example.js`.
-```
+```javascript
 module.exports = function(doc) {
   if (doc.hasOwnProperty('foo')) {
     doc.foo = true
@@ -31,7 +31,7 @@ pouchdb-couchdb-transform-cli ./db/ test-db ./transformer-example.js
 
 ## Asynchronous Transformers
 You can also make asynchronous calls in your transformers by adding the `async` keyword to your transformer function.
-```
+```javascript
 module.exports = async function(doc) {
   if (doc.hasOwnProperty('foo')) {
     const request = await fetch(`https://some-server.com/what-foo-should-be`)
