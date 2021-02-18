@@ -38,10 +38,11 @@ async function runBatch(params, db, transformer) {
       return process.exit()
     }
     clog(docs)
-    const transformedDocs = docs
-      .map(doc => transformer(doc))
-      .filter(entry => entry !== undefined)
-    clog(transformedDocs)
+    let transformedDocs = []
+    for (const doc of docs) {
+      transformedDocs.push(await transformer(doc))
+    }
+    transformedDocs = transformedDocs.filter(entry => entry !== undefined)
     for (let transformedDoc of transformedDocs) {
       log.debug(transformedDoc)
       await db.put(transformedDoc)
