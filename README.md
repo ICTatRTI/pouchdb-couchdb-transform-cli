@@ -11,7 +11,10 @@ npm install -g pouchdb-couchdb-transform-cli
 This will transform all docs with property of foo so that foo equals true. Save it as a file named `transformer-example.js`.
 ```
 module.exports = function(doc) {
-  if (doc.foo) return Object.assign({}, doc, {foo: true})
+  if (doc.foo) {
+    doc.foo = true
+    return doc
+  }
 }
 ```
 Note that if you don't return the doc, it won't be transformed / updated in the database.
