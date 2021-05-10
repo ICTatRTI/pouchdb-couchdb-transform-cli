@@ -8,6 +8,7 @@ if (!process.argv[2] || !process.argv[3] || !process.argv[4] || !process.argv[5]
 
 import PouchDB from 'pouchdb'
 import log from 'tangy-log'
+
 const sleep = (mseconds) => new Promise((res) => setTimeout(() => res(), mseconds))
 let dryRun = false
 if (process.argv[8]) {
@@ -24,7 +25,9 @@ const params = {
   skip: parseInt(process.argv[7]),
   dryRun: dryRun
 }
-import * as transformer from './task3.js'
+import * as task from './task3.js'
+const transformer = task.task
+console.log("task: " + task)
 const DB = PouchDB.defaults({prefix: params.pouchDbPrefix})
 const db = new DB(params.dbName)
 
