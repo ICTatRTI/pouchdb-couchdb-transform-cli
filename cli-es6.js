@@ -54,13 +54,13 @@ async function go(state) {
     //  Run batches.
     let shouldRun = true
     let response = { stdout: '', stderr: '' }
-    console.log("response: " + response.stdout)
+    console.log(response.stdout)
     let iteration=1
     while (shouldRun) {
       response = await exec(`./run-batch-es6.js ${params.pouchDbPrefix} ${params.dbName} ${params.transformerPath} ${params.view} ${params.batchSize} ${state.skip} iteration ${params.dryRun}`)
       iteration++
       // Determine next step.
-      console.log("response: " + response.stdout)
+      console.log(response.stdout)
       if (response.stderr === 'No docs in that range') {
         shouldRun = false
       } else {
