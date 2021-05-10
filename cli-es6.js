@@ -35,7 +35,7 @@ const params = {
   dryRun: dryRun
 }
 
-let transformer = require(params.transformerPath).transformer
+// let transformer = require(params.transformerPath).transformer
 
 let state = Object.assign({}, params, {
   complete: false,
@@ -56,7 +56,7 @@ async function go(state) {
     let response = { stdout: '', stderr: '' }
     console.log("response: " + response.stdout)
     while (shouldRun) {
-      response = await exec(`${dirname}/run-batch.js ${params.pouchDbPrefix} ${params.dbName} ${params.transformerPath} ${params.view} ${params.batchSize} ${state.skip} ${params.dryRun}`)
+      response = await exec(`./run-batch-es6.js ${params.pouchDbPrefix} ${params.dbName} ${params.transformerPath} ${params.view} ${params.batchSize} ${state.skip} ${params.dryRun}`)
       // Determine next stepi.
       console.log("response: " + response.stdout)
       if (response.stderr === 'No docs in that range') {
