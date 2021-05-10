@@ -15,8 +15,10 @@ import PouchDB from 'pouchdb'
 
 const sleep = (mseconds) => new Promise((res) => setTimeout(() => res(), mseconds))
 import util from 'util'
-const exec = util.promisify(require('child_process').exec)
-import log from ('tangy-log').log
+
+import * as child from 'child_process';
+const exec = util.promisify(child.exec)
+// import log from 'tangy-log/log'
 let dryRun = false
 if (process.argv[7]) {
   if (process.argv[7] === 'true' || process.argv[7] === true) {
@@ -46,7 +48,7 @@ async function go(state) {
     const DB = PouchDB.defaults({prefix: state.pouchDbPrefix})
     const db = new DB(state.dbName)
     // Periodically update the status json.
-    log.info(state)
+    // log.info(state)
     const logStateInterval = setInterval(() => log.info(state), 5*1000) 
     //  Run batches.
     let shouldRun = true
@@ -64,10 +66,11 @@ async function go(state) {
     }
     clearInterval(logStateInterval)
     state.complete = true
-    log.info(state)
+    // log.info(state)
     process.exit()
   } catch (error) {
-    log.error(error)
+    // log.error(error)
+    console.log(error)
   }
 }
 go(state)
