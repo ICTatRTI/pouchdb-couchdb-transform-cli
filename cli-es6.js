@@ -18,6 +18,7 @@ import util from 'util'
 
 import * as child from 'child_process';
 const exec = util.promisify(child.exec)
+import { dirname } from 'path';
 // import log from 'tangy-log/log'
 let dryRun = false
 if (process.argv[7]) {
@@ -46,17 +47,17 @@ let state = Object.assign({}, params, {
 async function go(state) {
   try {
     const DB = PouchDB.defaults({prefix: state.pouchDbPrefix})
-    const db = new DB(state.dbName)
+    // const db = new DB(state.dbName)
     // Periodically update the status json.
     // log.info(state)
-    const logStateInterval = setInterval(() => log.info(state), 5*1000) 
+    // const logStateInterval = setInterval(() => log.info(state), 5*1000)
     //  Run batches.
     let shouldRun = true
     let response = { stdout: '', stderr: '' }
     console.log("response: " + response.stdout)
     while (shouldRun) {
-      response = await exec(`${__dirname}/run-batch.js ${params.pouchDbPrefix} ${params.dbName} ${params.transformerPath} ${params.view} ${params.batchSize} ${state.skip} ${params.dryRun}`)
-      // Determine next step.
+      response = await exec(`${dirname}/run-batch.js ${params.pouchDbPrefix} ${params.dbName} ${params.transformerPath} ${params.view} ${params.batchSize} ${state.skip} ${params.dryRun}`)
+      // Determine next stepi.
       console.log("response: " + response.stdout)
       if (response.stderr === 'No docs in that range') {
         shouldRun = false
@@ -64,7 +65,7 @@ async function go(state) {
         state.skip += state.batchSize
       }
     }
-    clearInterval(logStateInterval)
+    // clearInterval(logStateInterval)
     state.complete = true
     // log.info(state)
     process.exit()
