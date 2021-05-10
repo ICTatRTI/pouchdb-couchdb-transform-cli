@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "pouchdb": "^7.2.2",
+    "tangy-form": "^4.25.0",
     "tangy-log": "^1.0.0"
   }
 }

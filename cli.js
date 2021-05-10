@@ -2,10 +2,10 @@
 
 if (!process.argv[2] || !process.argv[3] || !process.argv[4] || !process.argv[4]) {
   console.log('Usage:')
-  console.log('  pouchdb-couchdb-transform-cli <PouchDbPrefix> <dbName> <transformerPath> [view] [batchSize]  ')
+  console.log('  pouchdb-couchdb-transform-cli <PouchDbPrefix> <dbName> <transformerPath> [view] [batchSize] [dry-run] ')
   console.log('Example:')
   console.log(`  pouchdb-couchdb-transform-cli 'http://admin:password@couchdb:5984' test-db ./transformer-example.js`)
-  console.log(`  pouchdb-couchdb-transform-cli 'http://admin:password@couchdb:5984' test-db ./transformer-example.js _design/reporting/_views/foo 50`)
+  console.log(`  pouchdb-couchdb-transform-cli 'http://admin:password@couchdb:5984' test-db ./transformer-example.js _design/reporting/_views/foo 50 true`)
   process.exit()
 }
 
@@ -15,13 +15,19 @@ const sleep = (mseconds) => new Promise((res) => setTimeout(() => res(), msecond
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const log = require('tangy-log').log
-
+let dryRun = false
+if (process.argv[7]) {
+  if (process.argv[7] === 'true' || process.argv[7] === true) {
+    dryRun = true
+  }
+}
 const params = {
   pouchDbPrefix: process.argv[2],
   dbName: process.argv[3],
   transformerPath: process.argv[4],
   view: (process.argv[5]) ? process.argv[5] : '_all_docs',
-  batchSize: (process.argv[6]) ? parseInt(process.argv[6]) : 50
+  batchSize: (process.argv[6]) ? parseInt(process.argv[6]) : 50,
+  dryRun: dryRun
 }
 
 let transformer = require(params.transformerPath).transformer
@@ -43,9 +49,11 @@ async function go(state) {
     //  Run batches.
     let shouldRun = true
     let response = { stdout: '', stderr: '' }
+    console.log("response: " + response.stdout)
     while (shouldRun) {
-      response = await exec(`${__dirname}/run-batch.js ${params.pouchDbPrefix} ${params.dbName} ${params.transformerPath} ${params.view} ${params.batchSize} ${state.skip}`)
+      response = await exec(`${__dirname}/run-batch.js ${params.pouchDbPrefix} ${params.dbName} ${params.transformerPath} ${params.view} ${params.batchSize} ${state.skip} ${params.dryRun}`)
       // Determine next step.
+      console.log("response: " + response.stdout)
       if (response.stderr === 'No docs in that range') {
         shouldRun = false
       } else {

@@ -2,7 +2,7 @@
 
 if (!process.argv[2] || !process.argv[3] || !process.argv[4] || !process.argv[5] || !process.argv[6] || !process.argv[7]) {
   console.log('Usage:')
-  console.log('  ./process-batch.js <PouchDbPrefix> <dbName> <transformerPath> <view> <batchSize> <skip> ')
+  console.log('  ./process-batch.js <PouchDbPrefix> <dbName> <transformerPath> <view> <batchSize> <skip> <dry-run>')
   process.exit()
 }
 
@@ -10,16 +10,21 @@ const PouchDB = require('pouchdb')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
 const sleep = (mseconds) => new Promise((res) => setTimeout(() => res(), mseconds))
-
+let dryRun = false
+if (process.argv[8]) {
+  if (process.argv[8] === 'true' || process.argv[8] === true) {
+    dryRun = true
+  }
+}
 const params = {
   pouchDbPrefix: process.argv[2],
   dbName: process.argv[3],
   transformerPath: process.argv[4],
   view: process.argv[5],
   batchSize: parseInt(process.argv[6]),
-  skip: parseInt(process.argv[7])
+  skip: parseInt(process.argv[7]),
+  dryRun: dryRun
 }
-
 const transformer = require(params.transformerPath)
 const DB = PouchDB.defaults({prefix: params.pouchDbPrefix})
 const db = new DB(params.dbName)
@@ -37,15 +42,20 @@ async function runBatch(params, db, transformer) {
       process.stderr.write('No docs in that range')
       return process.exit()
     }
-    clog(docs)
+    // clog(docs)
     let transformedDocs = []
     for (const doc of docs) {
-      transformedDocs.push(await transformer(doc))
+      transformedDocs.push(await transformer(doc, db))
     }
+
     transformedDocs = transformedDocs.filter(entry => entry !== undefined)
-    for (let transformedDoc of transformedDocs) {
-      log.debug(transformedDoc)
-      await db.put(transformedDoc)
+    if (params.dryRun) {
+      console.log("Dry run! transformedDocs: " + transformedDocs.length)
+    } else {
+      for (let transformedDoc of transformedDocs) {
+        log.debug(transformedDoc)
+        await db.put(transformedDoc)
+      }
     }
     process.exit()
   } catch (error) {
