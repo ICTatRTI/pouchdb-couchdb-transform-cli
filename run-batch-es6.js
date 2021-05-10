@@ -25,15 +25,20 @@ const params = {
   skip: parseInt(process.argv[7]),
   dryRun: dryRun
 }
+//import { Get } from 'tangy-form/helpers.js'
+import * as pkg from 'tangy-form/helpers.js';
+// console.log(pkg.Get)
+const { Get } = pkg.Get;
 import * as task from './task3.js'
 const transformer = task.task
-console.log("task: " + task)
+// console.log("task: " + task)
 const DB = PouchDB.defaults({prefix: params.pouchDbPrefix})
 const db = new DB(params.dbName)
 
 async function runBatch(params, db, transformer) {
   try {
-    let body = {} 
+    let body = {}
+    let i=0
     if (params.view === '_all_docs') { 
       body = await db.allDocs({ include_docs: true, skip: params.skip, limit: params.batchSize })
     } else {
@@ -47,7 +52,8 @@ async function runBatch(params, db, transformer) {
     // clog(docs)
     let transformedDocs = []
     for (const doc of docs) {
-      transformedDocs.push(await transformer(doc, db))
+      i++
+      transformedDocs.push(await transformer(doc, db, i))
     }
 
     transformedDocs = transformedDocs.filter(entry => entry !== undefined)
