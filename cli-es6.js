@@ -57,7 +57,7 @@ async function go(state) {
     console.log(response.stdout)
     let iteration=1
     while (shouldRun) {
-      response = await exec(`./run-batch-es6.js ${params.pouchDbPrefix} ${params.dbName} ${params.transformerPath} ${params.view} ${params.batchSize} ${state.skip} iteration ${params.dryRun}`)
+      response = await exec(`./run-batch-es6.js ${params.pouchDbPrefix} ${params.dbName} ${params.transformerPath} ${params.view} ${params.batchSize} ${state.skip} ${iteration} ${params.dryRun}`)
       iteration++
       // Determine next step.
       console.log(response.stdout)
