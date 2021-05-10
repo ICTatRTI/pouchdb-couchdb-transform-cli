@@ -52,7 +52,9 @@ async function runBatch(params, db, transformer) {
     // clog(docs)
     let transformedDocs = []
     for (const doc of docs) {
-      transformedDocs.push(await transformer(doc, db, params.iteration))
+      const transformedDoc = await transformer(doc, db, params.iteration)
+      params.iteration++
+      transformedDocs.push(transformedDoc)
     }
 
     transformedDocs = transformedDocs.filter(entry => entry !== undefined)
