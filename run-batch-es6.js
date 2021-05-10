@@ -2,7 +2,7 @@
 
 if (!process.argv[2] || !process.argv[3] || !process.argv[4] || !process.argv[5] || !process.argv[6] || !process.argv[7]) {
   console.log('Usage:')
-  console.log('  ./process-batch.js <PouchDbPrefix> <dbName> <transformerPath> <view> <batchSize> <skip> <dry-run>')
+  console.log('  ./process-batch.js <PouchDbPrefix> <dbName> <transformerPath> <view> <batchSize> <skip> <iteration> <dry-run>')
   process.exit()
 }
 
@@ -11,8 +11,8 @@ import log from 'tangy-log'
 
 const sleep = (mseconds) => new Promise((res) => setTimeout(() => res(), mseconds))
 let dryRun = false
-if (process.argv[8]) {
-  if (process.argv[8] === 'true' || process.argv[8] === true) {
+if (process.argv[9]) {
+  if (process.argv[9] === 'true' || process.argv[9] === true) {
     dryRun = true
   }
 }
@@ -23,6 +23,7 @@ const params = {
   view: process.argv[5],
   batchSize: parseInt(process.argv[6]),
   skip: parseInt(process.argv[7]),
+  iteration: parseInt(process.argv[8]),
   dryRun: dryRun
 }
 //import { Get } from 'tangy-form/helpers.js'
@@ -38,7 +39,6 @@ const db = new DB(params.dbName)
 async function runBatch(params, db, transformer) {
   try {
     let body = {}
-    let i=0
     if (params.view === '_all_docs') { 
       body = await db.allDocs({ include_docs: true, skip: params.skip, limit: params.batchSize })
     } else {
@@ -52,8 +52,7 @@ async function runBatch(params, db, transformer) {
     // clog(docs)
     let transformedDocs = []
     for (const doc of docs) {
-      i++
-      transformedDocs.push(await transformer(doc, db, i))
+      transformedDocs.push(await transformer(doc, db, params.iteration))
     }
 
     transformedDocs = transformedDocs.filter(entry => entry !== undefined)
